@@ -5,27 +5,19 @@ from hume.expression_measurement.stream import Config
 #from hume.expression_measurement.stream.types import StreamLanguage
 from hume.expression_measurement.stream.socket_client import StreamConnectOptions
 
-# Set your Hume API key here (or via env var)
-HUME_API_KEY = "K1qPxVYFDOJNrCH4fq6t9o6HfPRW3HqoLf0IaP0IxMvM5zJz"
-# — or: HUME_API_KEY = os.getenv("HUME_API_KEY")
+HUME_API_KEY = "fill this out"
 
 async def analyze_text(text: str):
-    # Initialize the async client
     client = AsyncHumeClient(api_key=HUME_API_KEY)
 
-    # Configure the streaming measurement (default language)
     config = Config(language={})
     options = {"config": config}
 
-    # Open a streaming socket, send the text, and await the response
     async with client.expression_measurement.stream.connect(options=options) as socket:
-        # truncate to 2000 chars to stay within limits
         result = await socket.send_text(text[:2000])
 
-        # Extract the list of EmotionPrediction objects
         preds = result.language.predictions[0].emotions
 
-        # Build a name→score dict
         emotions = {emo.name: emo.score for emo in preds}
         print("Emotion breakdown:")
         for name, score in emotions.items():
